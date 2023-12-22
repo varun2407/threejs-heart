@@ -70,7 +70,7 @@
         var near = 0.1; // Adjusted near
         var far = 10000; // Adjusted far
         camera = new THREE.PerspectiveCamera(fov, aspectRatio, near, far);
-        camera.position.set(70, 50, 0); // Adjusted camera position
+        camera.position.set(100, 50, 0); // Adjusted camera position
 
         // Create renderer and setup the canvas
         renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -81,7 +81,7 @@
         var ambientLight = new THREE.AmbientLight(0x404040);
         scene.add(ambientLight);
         var directionalLight = new THREE.DirectionalLight(0xffffff, 5.0); 
-        directionalLight.position.set(10, 200, 10);
+        directionalLight.position.set(10, 200, -100);
         scene.add(directionalLight);
 
 
@@ -110,20 +110,26 @@
         sceneUI.open();
 
         //load polycam mesh
-        var loader = new GLTFLoader();
-        loader.load("heart.glb", function( gltf ) {
-            var poly = gltf.scenes[0].children[0];
-            
-            poly.scale.x = 100;
-            poly.scale.y = 100;
-            poly.scale.z = 100;
-            scene.add(gltf.scene);
+        const gltfFiles = ['ventricles.glb', 'left_atrium.glb', 'right_atrium.glb','pulmonary_artery.glb','aorta.glb'];
 
-            // PolyCam Mesh UI
-            window.SCENE.poly = poly;
+        gltfFiles.forEach((gltfFile, index) => {
+          const loader = new GLTFLoader();
+          loader.load(gltfFile, function (gltf) {
+            const mesh = gltf.scene.children[0];
+
+            // Adjust position for each loaded mesh
+            mesh.position.x = 0;
+            mesh.position.y = index * 10; 
+            mesh.position.z = 0;
+
+            scene.add(mesh);
+             // PolyCam Mesh UI
+             window.SCENE.poly = poly;
             polyui.open();
+          });
         });
-        
+
+           
         // interaction
         controls = new OrbitControls(camera, renderer.domElement);
         
