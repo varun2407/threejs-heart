@@ -129,8 +129,42 @@
             polyui.open();
           });
         });
+        function hideOtherModels(clickedModel) {
+    gltfModels.forEach((model) => {
+      if (model !== clickedModel) {
+        model.visible = false;
+      }
+    });
+  }
 
-           
+  gltfFiles.forEach((gltfFile, index) => {
+    const loader = new GLTFLoader();
+    loader.load(gltfFile, function (gltf) {
+      const mesh = gltf.scene.children[0];
+
+      // Adjust position for each loaded mesh
+      mesh.position.x = 0;
+      mesh.position.y = index * 10;
+      mesh.position.z = 0;
+
+      // Add the loaded model to the array
+      gltfModels.push(mesh);
+
+      // Add click event listener to the model
+      mesh.addEventListener('click', function () {
+        // Hide other models
+        hideOtherModels(mesh);
+      });
+
+      scene.add(mesh);
+
+      // PolyCam Mesh UI
+      window.SCENE.poly = mesh;
+      polyui.add(window.SCENE.poly.material, "wireframe");
+      polyui.open();
+    });
+  });
+
         // interaction
         controls = new OrbitControls(camera, renderer.domElement);
         
@@ -142,6 +176,14 @@
           requestAnimationFrame( animate );
           stats.update();
           controls.update();
+          if (camera.position.y < 300) {
+             camera.position.y += 1;
+         }     
+           if (camera.position.z < 200) {
+              camera.position.z += 0.1;
+        }
+
+
           if (window.SCENE.anaglyph) {
               effect.render(scene, camera);
           } else {
