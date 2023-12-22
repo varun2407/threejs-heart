@@ -49,7 +49,7 @@
         "change_material": function() {
             if (!window["SCENE"]["blender_old_material"]) {
                 window["SCENE"]["blender_old_material"] = window["SCENE"]["editedPoly"].material.clone();
-                window["SCENE"]["editedPoly"].material = new THREE.MeshNormalMaterial();
+                window["SCENE"]["editedPoly"].material = new THREE.MeshBasicMaterial();
             } else {
                 window["SCENE"]["editedPoly"].material = window["SCENE"]["blender_old_material"].clone();
                 window["SCENE"]["blender_old_material"] = null;
@@ -124,7 +124,8 @@
 
             scene.add(mesh);
              // PolyCam Mesh UI
-             window.SCENE.poly = poly;
+             window.SCENE.poly = mesh;
+            polyui.add(window.SCENE.poly.material, "wireframe");
             polyui.open();
           });
         });
