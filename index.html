@@ -139,19 +139,15 @@
       };
 
       function animate() {
-
-        requestAnimationFrame( animate );
-        stats.update();
-
-        controls.update();
-      
-        if (window.SCENE.anaglyph) {
-            effect.render(scene, camera);
-        } else {
-            renderer.render(scene, camera);
-        }
-        
-        
+          requestAnimationFrame( animate );
+          stats.update();
+          controls.update();
+          if (window.SCENE.anaglyph) {
+              effect.render(scene, camera);
+          } else {
+              renderer.render(scene, camera);
+          }
+}
     </script>
   </head>
   <body></body>
