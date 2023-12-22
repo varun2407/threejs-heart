@@ -151,48 +151,7 @@
             renderer.render(scene, camera);
         }
         
-        // Polycam mesh rotation
-        if (window.SCENE.poly) {
-          if (window.SCENE.rotate_poly) {
-            // Setup 180 degree quaternion
-            var T = Math.PI;
-            var w = Math.cos(T / 2);
-            var x = Math.sin(T / 2) * 0;
-            var y = Math.sin(T / 2) * 1;
-            var z = Math.sin(T / 2) * 0;
-            var q = new THREE.Quaternion(x, y, z, w);
-            window.SCENE.poly.quaternion.slerp(q, 0.05);
-
-          } else {
-            var q = new THREE.Quaternion();
-            window.SCENE.poly.quaternion.slerp(q, 0.05);
-          }
-        } 
         
-
-        if (window.SCENE.editedPoly) {
-          if (window.SCENE.rotate_blender) {
-            // Setup 180 degree quaternion
-            var T = Math.PI;
-            var w = Math.cos(T / 2);
-            var x = Math.sin(T / 2) * 0;
-            var y = Math.sin(T / 2) * 1;
-            var z = Math.sin(T / 2) * 0;
-            var q = new THREE.Quaternion(x, y, z, w);
-
-            window.SCENE.editedPoly.quaternion.slerp(q, 0.05);
-            window.SCENE.blender_helper.update();
-          } else {
-            var q = new THREE.Quaternion();
-            window.SCENE.editedPoly.quaternion.slerp(q, 0.05);
-            window.SCENE.blender_helper.update();
-          }
-
-        } else {
-            renderer.render(scene, camera);
-        }
-      };
-
     </script>
   </head>
   <body></body>
