@@ -28,10 +28,10 @@
       import { OrbitControls } from 'three/addons/controls/OrbitControls.js';    
       import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
       import { VertexNormalsHelper } from 'three/addons/helpers/VertexNormalsHelper.js';
- 
 
-      var renderer, effect, controls, scene, camera;
-      var stats;
+      var renderer, controls, scene, camera, stats;
+      var gltfModels = []; // Declare the array
+
       window["SCENE"] = {
         "anaglyph": false,
         "poly": null,
@@ -58,10 +58,6 @@
       };
 
       window.onload = function() {
-
-        window.THREE = THREE;
-
-        // Three.js code goes here
         scene = new THREE.Scene();
 
         // Setup the camera
@@ -84,16 +80,11 @@
         directionalLight.position.set(10, 200, -100);
         scene.add(directionalLight);
 
-
-
         // stats.js widget
         stats = new Stats();
         document.body.appendChild(stats.domElement);
 
         // setup lights
-        var ambientLight = new THREE.AmbientLight();
-        scene.add( ambientLight );
-
         var light = new THREE.DirectionalLight( 0xffffff, 5.0 );
         light.position.set( 10, 100, 10 );
         scene.add( light );
@@ -109,8 +100,16 @@
         sceneUI.addColor(light, "color").name("Ambient Light");
         sceneUI.open();
 
+        const rightAtriumLoader = new GLTFLoader();
+        rightAtriumLoader.load('right_atrium.glb', function(gltf) {
+          const rightAtrium = gltf.scene.children[0];
+          rightAtrium.position.set(0, 20, 0); // Adjust the initial position
+          scene.add(rightAtrium);
+          animateRightAtrium(rightAtrium);
+        });
+
         //load polycam mesh
-        const gltfFiles = ['ventricles.glb', 'left_atrium.glb', 'right_atrium.glb','pulmonary_artery.glb','aorta.glb'];
+        const gltfFiles = ['ventricles.glb', 'left_atrium.glb','pulmonary_artery.glb','aorta.glb'];
 
         gltfFiles.forEach((gltfFile, index) => {
           const loader = new GLTFLoader();
@@ -123,73 +122,94 @@
             mesh.position.z = 0;
 
             scene.add(mesh);
-             // PolyCam Mesh UI
-             window.SCENE.poly = mesh;
+            // PolyCam Mesh UI
+            window.SCENE.poly = mesh;
             polyui.add(window.SCENE.poly.material, "wireframe");
             polyui.open();
           });
         });
+
         function hideOtherModels(clickedModel) {
-    gltfModels.forEach((model) => {
-      if (model !== clickedModel) {
-        model.visible = false;
-      }
-    });
-  }
+          gltfModels.forEach((model) => {
+            if (model !== clickedModel) {
+              model.visible = false;
+            }
+          });
+        }
 
-  gltfFiles.forEach((gltfFile, index) => {
-    const loader = new GLTFLoader();
-    loader.load(gltfFile, function (gltf) {
-      const mesh = gltf.scene.children[0];
+        gltfFiles.forEach((gltfFile, index) => {
+          const loader = new GLTFLoader();
+          loader.load(gltfFile, function (gltf) {
+            const mesh = gltf.scene.children[0];
 
-      // Adjust position for each loaded mesh
-      mesh.position.x = 0;
-      mesh.position.y = index * 10;
-      mesh.position.z = 0;
+            // Adjust position for each loaded mesh
+            mesh.position.x = 0;
+            mesh.position.y = index * 10;
+            mesh.position.z = 0;
 
-      // Add the loaded model to the array
-      gltfModels.push(mesh);
+            // Add the loaded model to the array
+            gltfModels.push(mesh);
 
-      // Add click event listener to the model
-      mesh.addEventListener('click', function () {
-        // Hide other models
-        hideOtherModels(mesh);
-      });
+            // Add click event listener to the model
+            mesh.addEventListener('click', function () {
+              // Hide other models
+              hideOtherModels(mesh);
+            });
 
-      scene.add(mesh);
+            scene.add(mesh);
 
-      // PolyCam Mesh UI
-      window.SCENE.poly = mesh;
-      polyui.add(window.SCENE.poly.material, "wireframe");
-      polyui.open();
-    });
-  });
+            // PolyCam Mesh UI
+            window.SCENE.poly = mesh;
+            polyui.add(window.SCENE.poly.material, "wireframe");
+            polyui.open();
+          });
+        });
 
         // interaction
         controls = new OrbitControls(camera, renderer.domElement);
-        
+
         // call animation/rendering loop
-        animate();        
+        animate();
       };
 
       function animate() {
-          requestAnimationFrame( animate );
-          stats.update();
-          controls.update();
-          if (camera.position.y < 300) {
-             camera.position.y += 1;
-         }     
-           if (camera.position.z < 200) {
-              camera.position.z += 0.1;
+        requestAnimationFrame(animate);
+        stats.update();
+        controls.update();
+
+        if (camera.position.y < 400) {
+          camera.position.y += 1;
+        }
+        if (camera.position.z < 200) {
+          camera.position.z += 0.1;
         }
 
+        if (window.SCENE.anaglyph) {
+          effect.render(scene, camera);
+        } else {
+          renderer.render(scene, camera);
+        }
+      }
 
-          if (window.SCENE.anaglyph) {
-              effect.render(scene, camera);
-          } else {
-              renderer.render(scene, camera);
-          }
-}
+      function animateRightAtrium(model) {
+        const beatFrequency = 1.5; 
+        const beatAmplitude = 10; 
+
+        // Start the animation loop
+        function beatAnimation() {
+          requestAnimationFrame(beatAnimation);
+
+          const time = performance.now() * 0.001; 
+          const yOffset = Math.sin(time * beatFrequency) * beatAmplitude;
+          model.position.y = 20 + yOffset;
+
+          // Render the scene
+          renderer.render(scene, camera);
+        }
+
+        // Start the animation loop for the right atrium
+        beatAnimation();
+      }
     </script>
   </head>
   <body></body>
