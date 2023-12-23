@@ -4,7 +4,9 @@
 ## Check it out at: https://varun2407.github.io/threejs-heart/
 
 ### Introduction:
-The project is a visualization of the human heart using Three.JS. While starting out, we used a model from https://encephalostudios.com/portfolio.html, but separating the components using Blender turned out to be quite challenging. We then switched to a different model from https://sketchfab.com/feed (Suggested by another team). We separated the components using Blender, and tried simulating the heartbeat. We started by animating the left atrium to beat at 60Hz.
+The project is a visualization of the human heart using Three.JS. While starting out, we used a model from https://encephalostudios.com/portfolio.html, but separating the components using Blender turned out to be quite challenging. We then switched to a different model from https://sketchfab.com/feed (Suggested by another team). We separated the components using Blender, and tried simulating the heartbeat. 
+We started by studying resources from: https://www.nhlbi.nih.gov/health/heart/heart-beats to see what components interact in the process and tried creating an interactive simulation.
+
 
 ### Future Enhancements:
 As per our original proposal, we planned to help visually understand what affects the flow rates in the human heart when elements are introduced such as blockages and faulty valves.
