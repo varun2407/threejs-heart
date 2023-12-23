@@ -12,6 +12,7 @@ To play the animation, simply hit the "Simulate beat" button.
 
 ### Future Enhancements:
 As per our original proposal, we planned to help visually understand what affects the flow rates in the human heart when elements are introduced such as blockages and faulty valves.
+We also plan to add sounds for the heartbeat.
 
 ### Acknowledgements:
 Created by Nishanth Paul, Bapi Raju and Varun Shembekar. 
