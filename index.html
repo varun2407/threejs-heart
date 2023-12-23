@@ -204,8 +204,8 @@
       }
 
       function animateRightAtrium(model) {
-        const beatFrequency = 1.5; 
-        const beatAmplitude = 5; 
+        const beatFrequency = 6; 
+        const beatAmplitude = 10; 
 
         // Start the animation loop
         beatAnimation = function () {
@@ -218,24 +218,21 @@
           // Render the scene
           renderer.render(scene, camera);
         }
-
-        // Start the animation loop for the right atrium
-        // beatAnimation();
       }
 
       function animateVentricles() {
         new TWEEN.Tween(ventricles.position)
-          .to({ y: 10 }, 1000) 
+          .to({ y: 10 }, 500) 
           .easing(TWEEN.Easing.Quadratic.InOut)
           .start();
 
           setTimeout(() => {
           new TWEEN.Tween(ventricles.position)
-          .to({ y: 0 }, 1000)
+          .to({ y: 0 }, 500)
           .easing(TWEEN.Easing.Quadratic.InOut)
          .start();
-          setTimeout(animateVentriclesLoop, 2000);
-        }, 2000);
+          setTimeout(animateVentricles, 500);
+        }, 500);
         
       }
     </script>
