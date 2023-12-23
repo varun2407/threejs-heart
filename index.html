@@ -30,7 +30,7 @@
       import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
       import { VertexNormalsHelper } from 'three/addons/helpers/VertexNormalsHelper.js';
 
-      var renderer, controls, scene, camera, stats, ventricles;
+      var renderer, controls, scene, camera, stats, ventricles,beatAnimation;
       var gltfModels = []; // Declare the array
 
       window["SCENE"] = {
@@ -55,7 +55,11 @@
                 window["SCENE"]["editedPoly"].material = window["SCENE"]["blender_old_material"].clone();
                 window["SCENE"]["blender_old_material"] = null;
             }
-        }
+        },
+        "animateBoth": function () {
+        beatAnimation();
+        animateVentricles();
+      }
       };
 
       window.onload = function() {
@@ -99,11 +103,7 @@
         sceneUI.add(light.position, "z", -100, 100).name("Light Z");
         sceneUI.add(light, "intensity", 1, 10).name("Light Intensity");
         sceneUI.addColor(light, "color").name("Ambient Light");
-        sceneUI.add({
-            animateVentricles: function () {
-            animateVentricles();
-            }
-        }, 'animateVentricles').name('Simulate Beat');
+        sceneUI.add(window.SCENE, "animateBoth").name('Simulate Beat');
 
         sceneUI.open();
 
@@ -204,11 +204,11 @@
       }
 
       function animateRightAtrium(model) {
-        const beatFrequency = 6; 
-        const beatAmplitude = 10; 
+        const beatFrequency = 1.5; 
+        const beatAmplitude = 5; 
 
         // Start the animation loop
-        function beatAnimation() {
+        beatAnimation = function () {
           requestAnimationFrame(beatAnimation);
 
           const time = performance.now() * 0.001; 
@@ -220,7 +220,7 @@
         }
 
         // Start the animation loop for the right atrium
-        beatAnimation();
+        // beatAnimation();
       }
 
       function animateVentricles() {
@@ -229,12 +229,14 @@
           .easing(TWEEN.Easing.Quadratic.InOut)
           .start();
 
-        setTimeout(() => {
+          setTimeout(() => {
           new TWEEN.Tween(ventricles.position)
-            .to({ y: 0 }, 1000) 
-            .easing(TWEEN.Easing.Quadratic.InOut)
-            .start();
-        }, 2000); 
+          .to({ y: 0 }, 1000)
+          .easing(TWEEN.Easing.Quadratic.InOut)
+         .start();
+          setTimeout(animateVentriclesLoop, 2000);
+        }, 2000);
+        
       }
     </script>
   </head>
