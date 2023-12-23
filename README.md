@@ -5,5 +5,5 @@
 
 The project is a visualization of the human heart using Three.JS. While starting out, we used a model from https://encephalostudios.com/portfolio.html, but separating the components using Blender turned out to be quite challenging. We then switched to a different model from https://sketchfab.com/feed (Suggested by another team). We separated the components using Blender, and tried simulating the heartbeat. We started by animating the left atrium to beat at 60Hz.
 
-###### Inspired by:
+### Inspired by:
 https://simonreisinger.github.io/Interactive-3D-Human-Heart-Visualization/
