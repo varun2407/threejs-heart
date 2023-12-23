@@ -63,6 +63,14 @@
         animateVentricles();
         startAnimationforArtery();
         animationStarted = true;
+        const infoText = document.createElement("div");
+        infoText.style.position = "absolute";
+        infoText.style.bottom = "20px";
+        infoText.style.color = "white";
+        infoText.style.fontFamily = "Arial, sans-serif";
+        infoText.style.fontSize = "20px";
+        infoText.innerHTML = "After the atrium pump blood into the ventricles, the valves between the atria and ventricles close to prevent backflow. After the ventricles contract to pump blood away from the heart, the aortic and pulmonary valves close.";
+        document.body.appendChild(infoText);
         }
       }
       };
