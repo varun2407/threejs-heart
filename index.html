@@ -30,8 +30,9 @@
       import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
       import { VertexNormalsHelper } from 'three/addons/helpers/VertexNormalsHelper.js';
 
-      var renderer, controls, scene, camera, stats, ventricles,beatAnimation;
-      var gltfModels = []; // Declare the array
+      var renderer, controls, scene, camera, stats, ventricles,beatAnimation,startAnimationforArtery;
+      var gltfModels = []; 
+      var animationStarted = false;
 
       window["SCENE"] = {
         "anaglyph": false,
@@ -56,9 +57,13 @@
                 window["SCENE"]["blender_old_material"] = null;
             }
         },
-        "animateBoth": function () {
+        "animateBeat": function () {
+        if(!animationStarted){
         beatAnimation();
         animateVentricles();
+        startAnimationforArtery();
+        animationStarted = true;
+        }
       }
       };
 
@@ -103,11 +108,18 @@
         sceneUI.add(light.position, "z", -100, 100).name("Light Z");
         sceneUI.add(light, "intensity", 1, 10).name("Light Intensity");
         sceneUI.addColor(light, "color").name("Ambient Light");
-        sceneUI.add(window.SCENE, "animateBoth").name('Simulate Beat');
+        sceneUI.add(window.SCENE, "animateBeat").name('Simulate Beat');
+       
 
         sceneUI.open();
 
-      
+        const pulmonaryArteryLoader = new GLTFLoader();
+        pulmonaryArteryLoader.load('pulmonary_artery.glb', function (gltf) {
+        const pulmonaryArtery = gltf.scene.children[0];
+        pulmonaryArtery.position.set(0, 30, 0); 
+        scene.add(pulmonaryArtery);
+        animatePulmonaryArtery(pulmonaryArtery);
+        });
 
         const ventriclesLoader = new GLTFLoader();
         ventriclesLoader.load('ventricles.glb', function (gltf) {
@@ -128,8 +140,9 @@
           animateRightAtrium(rightAtrium);
         });
 
+        
         // load polycam mesh
-        const gltfFiles = ['left_atrium.glb','pulmonary_artery.glb','aorta.glb'];
+        const gltfFiles = ['left_atrium.glb','aorta.glb'];
 
         gltfFiles.forEach((gltfFile, index) => {
           const loader = new GLTFLoader();
@@ -203,19 +216,18 @@
         renderer.render(scene, camera);
       }
 
+      // LUB
       function animateRightAtrium(model) {
         const beatFrequency = 6; 
         const beatAmplitude = 10; 
 
-        // Start the animation loop
         beatAnimation = function () {
           requestAnimationFrame(beatAnimation);
 
           const time = performance.now() * 0.001; 
           const yOffset = Math.sin(time * beatFrequency) * beatAmplitude;
-          model.position.y = 20 + yOffset;
+          model.position.x = 2.5 + yOffset;
 
-          // Render the scene
           renderer.render(scene, camera);
         }
       }
@@ -235,6 +247,31 @@
         }, 500);
         
       }
+
+      //DUB
+      function animatePulmonaryArtery(model) {
+          const initialPosition = { y: 0 }; 
+          const targetPosition = { y: 20 }; 
+          const animationDuration = 1000; 
+
+
+        startAnimationforArtery = function () {
+        new TWEEN.Tween(model.position)
+          .to(targetPosition, animationDuration)
+          .easing(TWEEN.Easing.Quadratic.InOut)
+          .onComplete(() => {
+            new TWEEN.Tween(model.position)
+              .to(initialPosition, animationDuration)
+              .easing(TWEEN.Easing.Quadratic.InOut)
+              .onComplete(() => {
+                startAnimationforArtery();
+              })
+              .start();
+          })
+          .start();
+      }
+      // startAnimationforArtery();
+    }
     </script>
   </head>
   <body></body>
