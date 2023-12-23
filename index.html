@@ -1,49 +1,29 @@
-<!DOCTYPE html>
-<html lang="en">
+<html>
   <head>
-    <meta charset="UTF-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1.0"
-    />
     <style>
       html, body { 
-        background-color: #000;
+        background-color:#000;
         margin: 0;
         padding: 0;
         height: 100%;
         overflow: hidden !important;  
       }
     </style>
-
-    <script
-      async
-      src="https://unpkg.com/es-module-shims@1.6.3/dist/es-module-shims.js"
-    ></script>
-    <script
-      src="https://mrdoob.github.io/stats.js/build/stats.min.js"
-    ></script>
-    <script
-      src="https://cdnjs.cloudflare.com/ajax/libs/tween.js/18.6.4/tween.umd.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="https://get.goxtk.com/xtk_xdat.gui.js"
-    ></script>
-    <script
-      type="importmap"
-    >
-      {
-        "imports": {
-          "three": "https://unpkg.com/three@latest/build/three.module.js",
-          "three/addons/": "https://unpkg.com/three@latest/examples/jsm/"
-        }
+    
+    <script async src="https://unpkg.com/es-module-shims@1.6.3/dist/es-module-shims.js"></script>
+    <script src="https://mrdoob.github.io/stats.js/build/stats.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tween.js/18.6.4/tween.umd.js"></script>
+    <script type="text/javascript" src="https://get.goxtk.com/xtk_xdat.gui.js"></script>
+    <script type="importmap">
+    {
+      "imports": {
+        "three": "https://unpkg.com/three@latest/build/three.module.js",
+        "three/addons/": "https://unpkg.com/three@latest/examples/jsm/"
       }
+    }
     </script>
 
-    <script
-      type="module"
-    >
+    <script type="module">
 
       import * as THREE from 'three';
       import { OrbitControls } from 'three/addons/controls/OrbitControls.js';    
@@ -120,12 +100,14 @@
         sceneUI.add(light, "intensity", 1, 10).name("Light Intensity");
         sceneUI.addColor(light, "color").name("Ambient Light");
         sceneUI.add({
-            Lub: function () {
-            Lub(rightAtrium, ventricles);
+            animateVentricles: function () {
+            animateVentricles();
             }
-        }, 'Lub').name('Lub');
+        }, 'animateVentricles').name('Simulate Beat');
 
         sceneUI.open();
+
+      
 
         const ventriclesLoader = new GLTFLoader();
         ventriclesLoader.load('ventricles.glb', function (gltf) {
@@ -146,6 +128,7 @@
           animateRightAtrium(rightAtrium);
         });
 
+        // load polycam mesh
         const gltfFiles = ['left_atrium.glb','pulmonary_artery.glb','aorta.glb'];
 
         gltfFiles.forEach((gltfFile, index) => {
@@ -153,12 +136,14 @@
           loader.load(gltfFile, function (gltf) {
             const mesh = gltf.scene.children[0];
 
+            // Adjust position for each loaded mesh
             mesh.position.x = 0;
             mesh.position.y = index * 10; 
             mesh.position.z = 0;
 
             scene.add(mesh);
             
+            // PolyCam Mesh UI
             window.SCENE.poly = mesh;
             gui.add(window.SCENE.poly.material, "wireframe");
           });
@@ -177,13 +162,17 @@
           loader.load(gltfFile, function (gltf) {
             const mesh = gltf.scene.children[0];
 
+            // Adjust position for each loaded mesh
             mesh.position.x = 0;
             mesh.position.y = index * 10;
             mesh.position.z = 0;
 
+            // Add the loaded model to the array
             gltfModels.push(mesh);
 
+            // Add click event listener to the model
             mesh.addEventListener('click', function () {
+              // Hide other models
               hideOtherModels(mesh);
             });
 
@@ -191,8 +180,10 @@
           });
         });
 
+        // interaction
         controls = new OrbitControls(camera, renderer.domElement);
 
+        // call animation/rendering loop
         animate();
       };
 
@@ -216,6 +207,7 @@
         const beatFrequency = 6; 
         const beatAmplitude = 10; 
 
+        // Start the animation loop
         function beatAnimation() {
           requestAnimationFrame(beatAnimation);
 
@@ -223,9 +215,11 @@
           const yOffset = Math.sin(time * beatFrequency) * beatAmplitude;
           model.position.y = 20 + yOffset;
 
+          // Render the scene
           renderer.render(scene, camera);
         }
 
+        // Start the animation loop for the right atrium
         beatAnimation();
       }
 
@@ -241,39 +235,6 @@
             .easing(TWEEN.Easing.Quadratic.InOut)
             .start();
         }, 2000); 
-      }
-
-      function Lub(model, ventricles) {
-        const beatFrequency = 6;
-        const beatAmplitude = 10;
-
-        function beatAnimation() {
-          requestAnimationFrame(beatAnimation);
-
-          const time = performance.now() * 0.001;
-          const yOffset = Math.sin(time * beatFrequency) * beatAmplitude;
-          model.position.y = 20 + yOffset;
-
-          renderer.render(scene, camera);
-        }
-
-        beatAnimation();
-
-        function animateVentricles() {
-          new TWEEN.Tween(ventricles.position)
-            .to({ y: 10 }, 1000)
-            .easing(TWEEN.Easing.Quadratic.InOut)
-            .start();
-
-          setTimeout(() => {
-            new TWEEN.Tween(ventricles.position)
-              .to({ y: 0 }, 1000)
-              .easing(TWEEN.Easing.Quadratic.InOut)
-              .start();
-          }, 2000);
-        }
-
-        animateVentricles();
       }
     </script>
   </head>
